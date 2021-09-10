@@ -1,7 +1,18 @@
 from gendiff.gendiff import generate_diff
 
-file1 = 'gendiff/file1.json'
-file2 = 'gendiff/file2.json'
+file1 = {
+  "host": "hexlet.io",
+  "timeout": 50,
+  "proxy": "123.234.53.22",
+  "follow": False,
+}
+
+file2 = {
+  "timeout": 20,
+  "verbose": True,
+  "host": "hexlet.io",
+}
+
 
 
 new_json = "{\
