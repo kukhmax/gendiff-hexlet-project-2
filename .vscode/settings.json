@@ -1,7 +1,0 @@
-{
-    "python.testing.pytestArgs": [
-        "gendiff"
-    ],
-    "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
-}
