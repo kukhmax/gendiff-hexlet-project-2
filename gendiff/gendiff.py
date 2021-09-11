@@ -1,7 +1,25 @@
 #!/usr/bin/env
 
+import json
+import yaml
 
-def changed_json(gen_diff):
+
+def get_file(f1, f2):
+    if f1[-4:] == ".yml":
+        with open(f1) as f1:
+            with open(f2) as f2:
+                file1 = yaml.safe_load(f1)
+                file2 = yaml.safe_load(f2)
+    elif f1[-5:] == ".json":
+        with open(f1) as f1:
+            with open(f2) as f2:
+                file1 = json.load(f1)
+                file2 = json.load(f2)
+    f1.close()
+    return file1, file2
+
+
+def changed_value(gen_diff):
     for i, string in enumerate(gen_diff):
         if string[-5:] == 'False':
             gen_diff[i] = string[:-5] + 'false'
@@ -12,7 +30,8 @@ def changed_json(gen_diff):
     return gen_diff
 
 
-def generate_diff(file1, file2):  # noqa: C901
+def generate_diff(f1, f2):  # noqa: C901
+    file1, file2 = get_file(f1, f2)
     gen_diff = ['{']
     for key, value in file1.items():
         if key in file2.keys() and value == file2[key]:
@@ -27,7 +46,7 @@ def generate_diff(file1, file2):  # noqa: C901
 
     gen_diff = sorted(gen_diff, key=lambda x: x[4:])
     gen_diff.append('\n}')
-    gen_diff = changed_json(gen_diff)
+    gen_diff = changed_value(gen_diff)
 
     print(''.join(gen_diff))
     return ''.join(gen_diff)

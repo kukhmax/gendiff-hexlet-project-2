@@ -2,7 +2,6 @@
 
 from gendiff.gendiff import generate_diff
 import argparse
-import json
 
 # positional arguments
 parser = argparse.ArgumentParser(description='Generate diff')
@@ -15,9 +14,7 @@ args = parser.parse_args()
 
 
 def main():
-    file1 = json.load(open(args.first_file))
-    file2 = json.load(open(args.second_file))
-    generate_diff(file1, file2)
+    generate_diff(args.first_file, args.second_file)
 
 
 if __name__ == '__main__':
