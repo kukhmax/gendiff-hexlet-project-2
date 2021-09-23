@@ -1,6 +1,6 @@
-from gendiff.gendiff import generate_diff
+from gendiff.gendiff import stylish
 
-diff = """{
+DIFF = """{
   - follow: false
     host: hexlet.io
   - proxy: 123.234.53.22
@@ -11,12 +11,14 @@ diff = """{
 
 
 def test_generate_diff_with_yaml():
-    file1 = 'file1.yml'
-    file2 = 'file2.yml'
-    assert generate_diff(file1, file2) == diff
+    file1 = 'tests/fixtures/file1.yml'
+    file2 = 'tests/fixtures/file2.yml'
+    assert stylish(file1, file2) == DIFF
 
 
 def test_generate_diff_with_json():
-    file1 = 'file1.json'
-    file2 = 'file2.json'
-    assert generate_diff(file1, file2) == diff
+    file1 = 'tests/fixtures/file1.json'
+    file2 = 'tests/fixtures/file2.json'
+    assert stylish(file1, file2) == DIFF
+
+
