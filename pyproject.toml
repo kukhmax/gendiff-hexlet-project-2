@@ -17,6 +17,7 @@ pytest-cov = "^2.12.1"
 autopep8 = "^1.5.7"
 PyYAML = "^5.4.1"
 mypy = "^0.910"
+types-PyYAML = "^5.4.10"
 
 [tool.poetry.scripts]
 gendiff = "gendiff.scripts.run_gendiff:main"
