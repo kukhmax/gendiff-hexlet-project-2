@@ -1,4 +1,4 @@
-from gendiff.gendiff import stylish
+from gendiff.formatters.stylish import get_stylish
 
 
 
@@ -51,10 +51,10 @@ DIFF_OF_NESTED_FILES = """{
 def test_generate_diff_with_nested_yaml():
     file1 = 'tests/fixtures/file_nested1.yaml'
     file2 = 'tests/fixtures/file_nested2.yaml'
-    assert stylish(file1, file2) == DIFF_OF_NESTED_FILES
+    assert get_stylish(file1, file2) == DIFF_OF_NESTED_FILES
 
 
 def test_generate_diff_with_nested_json():
     file1 = 'tests/fixtures/file_nested1.json'
     file2 = 'tests/fixtures/file_nested2.json'
-    assert stylish(file1, file2) == DIFF_OF_NESTED_FILES
+    assert get_stylish(file1, file2) == DIFF_OF_NESTED_FILES

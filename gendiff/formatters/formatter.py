@@ -63,6 +63,7 @@ def make_diff(dict1: Dict[str, Any] , dict2: Dict[str, Any]) -> List[Dict[str, A
 
 
 def get_diff(key, value, meta):
+    """Make dict of data"""
     return dict(key=key, value=value, meta=meta)
 
 
@@ -76,68 +77,3 @@ def get_if_second(key, value):
 
 def get_if_both(key, value):
     return get_diff(key, value, 'in_both')
-
-
-def generate_diff_list(file1, file2):
-    diff = generate_diff(file1, file2)
-    return wrap_generate_diff(diff)
-
-def wrap_generate_diff(diff):  # noqaС901
-    for d in diff:
-        if d['value'] is True:
-            d['value'] = 'true'
-        if d['value'] is False:
-            d['value'] = 'false'
-        if d['value'] is None:
-            d['value'] = 'null'
-
-    for d in diff:
-        if d['meta'] == 'in_both':
-            d['key'] = 'in_both.' + d['key']
-        elif d['meta'] == 'in_first':
-            d['key'] = 'in_first.' + d['key']
-        elif d['meta'] == 'in_second':
-            d['key'] = 'in_second.' + d['key']
-        d.pop('meta')
-
-    diff_list = []
-    for i in diff:
-        if isinstance(i['value'], list):
-            wrap_generate_diff(i['value'])
-        diff_list.append(i)
-    return diff_list
-
-
-def stylish(file1, file2):
-    diff_list = generate_diff_list(file1, file2)
-
-    def wrapper(diff_list, indent):
-        end_diff = []
-        for i in diff_list:
-            str_ind = ' ' * indent
-            key, value = i['key'], i['value']
-            if isinstance(value, list):
-
-                value = wrapper(value, indent + 4)
-            elif isinstance(value, dict):
-                if isinstance(value, dict):
-                    value = format_dict(value, str_ind)
-            end_diff.append('{}{}: {}'.format(str_ind, key, value))
-
-        ind_bracket = ' ' * (indent - 4)
-        final_string = '{\n' + '\n'.join(end_diff) + '\n' + ind_bracket + '}'
-        final_string = final_string.replace('  in_both.', '  ')
-        final_string = final_string.replace('  in_first.', '- ')
-        final_string = final_string.replace('  in_second.', '+ ')
-        return final_string
-    return wrapper(diff_list, 4)
-
-
-def format_dict(dct, indent):
-    res = []
-    for (key, value) in sorted(dct.items()):
-        if isinstance(value, dict):
-            value = format_dict(value, indent + '    ')
-        res.append('{}    {}: {}'.format(indent, key, value))
-    string = '{{\n{}\n{}}}'.format('\n'.join(res), indent)
-    return string
