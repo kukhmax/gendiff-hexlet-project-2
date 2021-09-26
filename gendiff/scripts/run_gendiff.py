@@ -3,6 +3,7 @@
 import argparse
 from gendiff.formatters.stylish import get_stylish
 from gendiff.formatters.plain import get_plain
+from gendiff.formatters.json_json import get_json
 
 
 # positional arguments
@@ -22,6 +23,8 @@ def main():
         print(get_stylish(args.first_file, args.second_file))
     elif args.format == 'plain':
         print(get_plain(args.first_file, args.second_file))
+    elif args.format == 'json':
+        print(get_json(args.first_file, args.second_file))
 
 
 if __name__ == '__main__':

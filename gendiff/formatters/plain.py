@@ -1,4 +1,4 @@
-#!/usr/bin/env
+#!/usr/bin/env python3
 
 from gendiff.formatters.formatter import generate_diff
 from gendiff.formatters.stylish import change_value_bool
