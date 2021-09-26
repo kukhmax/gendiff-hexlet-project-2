@@ -3,7 +3,7 @@
 import argparse
 from gendiff.formatters.stylish import get_stylish
 from gendiff.formatters.plain import get_plain
-from gendiff.formatters.json_json import get_json
+from gendiff.formatters.json import get_json
 
 
 # positional arguments

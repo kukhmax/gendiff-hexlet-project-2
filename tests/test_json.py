@@ -1,6 +1,6 @@
 #!/use/bin/env python3
 
-from gendiff.formatters import json_json
+from gendiff.formatters.json import get_json
 
 DIFF_JSON = """[
   {
@@ -139,10 +139,10 @@ DIFF_JSON = """[
 def test_get_json_with_nested_yaml():
     file1 = 'tests/fixtures/file_nested1.yaml'
     file2 = 'tests/fixtures/file_nested2.yaml'
-    assert json_json.get_json(file1, file2) == DIFF_JSON
+    assert get_json(file1, file2) == DIFF_JSON
 
 
 def test_get_json_with_nested_json():
     file1 = 'tests/fixtures/file_nested1.json'
     file2 = 'tests/fixtures/file_nested2.json'
-    assert json_json.get_json(file1, file2) == DIFF_JSON
+    assert get_json(file1, file2) == DIFF_JSON
