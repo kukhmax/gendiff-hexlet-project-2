@@ -1,0 +1,1 @@
+from gendiff.formatters.formatter import generate_diff
