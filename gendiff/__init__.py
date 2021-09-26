@@ -1,7 +1,5 @@
-from gendiff.formatters.formatter import generate_diff
-from yaml import safe_load
+from gendiff.difference import generate_diff
 
 __all__ = (  # noqa: WPS410
     'generate_diff',
-    'safe_load'
 )

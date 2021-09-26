@@ -1,5 +1,5 @@
 from typing import Any, Dict, List
-from gendiff.formatters.formatter import generate_diff
+from gendiff.difference import generate_diff
 
 
 def generate_diff_list(file1, file2):

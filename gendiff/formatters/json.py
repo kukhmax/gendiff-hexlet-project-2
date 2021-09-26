@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from json import dumps
-from gendiff.formatters.formatter import generate_diff
+from gendiff.difference import generate_diff
 
 
 def get_json(path_file1: str, path_file2: str) -> str:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from gendiff.formatters.parser_data import get_parsed_files
+from gendiff.parser_data import get_parsed_files
 from typing import Any, List, Dict
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from gendiff.formatters.formatter import generate_diff
+from gendiff.difference import generate_diff
 from gendiff.formatters.stylish import change_value_bool
 from typing import List, Dict
 
