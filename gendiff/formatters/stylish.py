@@ -1,9 +1,9 @@
 from typing import Any, Dict, List
-from gendiff.difference import generate_diff
+from gendiff.difference import make_diff
 
 
 def generate_diff_list(file1, file2):
-    diff = generate_diff(file1, file2)
+    diff = make_diff(file1, file2)
     return change_structure_of_diff(diff)
 
 

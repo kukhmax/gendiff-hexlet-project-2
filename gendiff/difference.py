@@ -4,12 +4,13 @@ from gendiff.parser_data import get_parsed_files
 from typing import Any, List, Dict
 
 
-def generate_diff(path_file1, path_file2):
+def make_diff(path_file1, path_file2):
     dict1, dict2 = get_parsed_files(path_file1, path_file2)
-    return make_diff(dict1, dict2)
+    return make_diff_structure(dict1, dict2)
 
 
-def make_diff(dict1: Dict[str, Any] , dict2: Dict[str, Any]) -> List[Dict[str, Any]]:  # noqaС901
+def make_diff_structure(dict1: Dict[str, Any],                           # noqaС901
+                        dict2: Dict[str, Any]) -> List[Dict[str, Any]]:  # noqaС901
     """Make data structure with files difference
     Args:
         dict1: Dict of first file.
@@ -32,7 +33,7 @@ def make_diff(dict1: Dict[str, Any] , dict2: Dict[str, Any]) -> List[Dict[str, A
             if value1 == value2:
                 diff.append(get_if_both(key, value1))
             elif isinstance(value1, dict) and isinstance(value2, dict):
-                child = make_diff(value1, value2)
+                child = make_diff_structure(value1, value2)
                 diff.append(get_if_both(key, child))
             else:
                 diff.append(get_if_first(key, value1))

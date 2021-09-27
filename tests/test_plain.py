@@ -1,4 +1,4 @@
-from gendiff.formatters.plain import get_plain
+from gendiff.formatters.engine import generate_diff
 
 
 DIFF = """Property 'common.follow' was added with value: false
@@ -17,10 +17,10 @@ Property 'group3' was added with value: [complex value]"""
 def test_get_plain_with_yaml():
     file1 = 'tests/fixtures/file_nested1.yaml'
     file2 = 'tests/fixtures/file_nested2.yaml'
-    assert get_plain(file1, file2) == DIFF
+    assert generate_diff(file1, file2, 'plain') == DIFF
 
 
 def test_get_plain_with_json():
     file1 = 'tests/fixtures/file_nested1.json'
     file2 = 'tests/fixtures/file_nested2.json'
-    assert get_plain(file1, file2) == DIFF
+    assert generate_diff(file1, file2, 'plain') == DIFF

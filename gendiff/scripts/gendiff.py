@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-from gendiff.formatters.stylish import get_stylish
-from gendiff.formatters.plain import get_plain
-from gendiff.formatters.json import get_json
-
+from gendiff.formatters.engine import generate_diff
 
 # positional arguments
 parser = argparse.ArgumentParser(description='Generate diff')
@@ -19,12 +16,9 @@ args = parser.parse_args()
 
 
 def main():
-    if args.format == 'stylish':
-        print(get_stylish(args.first_file, args.second_file))
-    elif args.format == 'plain':
-        print(get_plain(args.first_file, args.second_file))
-    elif args.format == 'json':
-        print(get_json(args.first_file, args.second_file))
+    print(generate_diff(args.first_file,
+                        args.second_file,
+                        args.format))
 
 
 if __name__ == '__main__':

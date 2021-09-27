@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-from gendiff.difference import generate_diff
+from gendiff.difference import make_diff
 from gendiff.formatters.stylish import change_value_bool
 from typing import List, Dict
 
 
 def get_plain(path_file1: str, path_file2: str) -> str:
-    diff = generate_diff(path_file1, path_file2)
+    diff = make_diff(path_file1, path_file2)
     # меняем формат (например, True на 'true')
     diff = change_value_bool(diff)
     strings = get_plain_format(diff)
