@@ -29,7 +29,7 @@ def get_plain_format(diff: List[Dict]) -> List[str]:  # noqa C901
             elif i < len(diff) - 1 and key == diff[i + 1]['key']:
                 result = get_string_if_updated('.'.join(new_key + [key]),
                                                value,
-                                               diff[i + 1]['value'])
+                                               change_dict_to_default_value(diff[i + 1]['value']))  # noqa E501
                 strings.append(result)
             elif meta == 'in_first':
                 result = get_string_if_removed('.'.join(new_key + [key]))
