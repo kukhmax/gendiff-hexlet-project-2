@@ -1,6 +1,6 @@
+# flake8: noqa
+
 from gendiff.formatters.engine import generate_diff
-
-
 
 DIFF_OF_NESTED_FILES = """{
     common: {
@@ -77,3 +77,4 @@ def test_generate_diff_with_nested_json():
     file1 = 'tests/fixtures/file_nested1.json'
     file2 = 'tests/fixtures/file_nested2.json'
     assert generate_diff(file1, file2) == DIFF_OF_NESTED_FILES
+

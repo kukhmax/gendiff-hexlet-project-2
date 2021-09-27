@@ -1,4 +1,4 @@
-#!/use/bin/env python3
+# flake8: noqa
 
 from gendiff.formatters.engine import generate_diff
 

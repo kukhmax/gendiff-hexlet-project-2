@@ -20,5 +20,3 @@ def test_generate_diff_with_json():
     file1 = 'tests/fixtures/file1.json'
     file2 = 'tests/fixtures/file2.json'
     assert get_stylish(file1, file2) == DIFF
-
-
