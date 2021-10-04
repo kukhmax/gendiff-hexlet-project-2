@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
 import json
-from gendiff.difference import make_diff
+from gendiff.formatters.sorting import sort_diff
+from typing import List, Dict
 
 
-def get_json(path_file1: str, path_file2: str) -> str:
+def get_json(diff: List[Dict]) -> str:
     """Serialize 'diff' to a JSON formatted 'str' """
-    diff = make_diff(path_file1, path_file2)
-    return json.dumps(diff)
+    sorted_diff = sort_diff(diff)
+    return json.dumps(sorted_diff)

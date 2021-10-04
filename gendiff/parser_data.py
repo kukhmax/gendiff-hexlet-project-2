@@ -1,26 +1,22 @@
 #!/usr/bin/env python3
 
-import json
-from yaml import safe_load
-from typing import Dict, Tuple
+import json as js
+import yaml as yml
+from pathlib import Path
+from typing import Any, Dict
 
 
-def get_parsed_files(path_file1: str, path_file2: str) -> Tuple[Dict, Dict]:
-    """Check formats of files and read them.
+def get_parsed_files(path_file: str) -> Dict[str, Any]:
+    """Check formats of file and read them.
     Args:
-        path_file1: Path to the first file.
-        path_file2: Path to the second file.
+        path_file: Path to a file.
     Returns:
-        Parsed files.
+        Parsed file.
     """
-    if path_file1[-4:] == ".yml" or path_file1[-5:] == ".yaml":
-        with open(path_file1) as f1:
-            dict_from_file1 = safe_load(f1)
-        with open(path_file2) as f2:
-            dict_from_file2 = safe_load(f2)
-    elif path_file1[-5:] == ".json":
-        with open(path_file1) as f1:
-            dict_from_file1 = json.load(f1)
-        with open(path_file2) as f2:
-            dict_from_file2 = json.load(f2)
-    return dict_from_file1, dict_from_file2
+    if Path(path_file).suffix == ".yml" or Path(path_file).suffix == ".yaml":
+        with open(path_file) as f1:
+            dict_from_file = yml.safe_load(f1)
+    elif Path(path_file).suffix == ".json":
+        with open(path_file) as f1:
+            dict_from_file = js.load(f1)
+    return dict_from_file

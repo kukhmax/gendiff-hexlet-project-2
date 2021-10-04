@@ -1,82 +1,52 @@
+from gendiff.formatters.sorting import sort_diff
 from typing import Any, Dict, List
-from gendiff.difference import make_diff
+
+TRUE, FALSE, NONE = 'true', 'false', 'null'
+INDENT = 4
+STR_INDENT = '    '
 
 
-def generate_diff_list(file1, file2):
-    diff = make_diff(file1, file2)
-    return change_structure_of_diff(diff)
-
-
-def change_value_bool(diff: List[Dict]) -> List[Dict]:  # noqa C901
-    """Change values: True, False, None to true, false, null
-    Arg:
-        diff: list of old data
-    Returns:
-        diff: list of new data
+def get_value(value):
+    """Change values: True, False, None
+       to true, false, null
     """
-    for d in diff:
-        if d['value'] is True:
-            d['value'] = 'true'
-        elif d['value'] is False:
-            d['value'] = 'false'
-        elif d['value'] is None:
-            d['value'] = 'null'
-
-    diff_list = []
-    for i in diff:
-        if isinstance(i['value'], list):
-            change_value_bool(i['value'])
-        diff_list.append(i)
-    return diff_list
-
-def change_structure_of_diff(diff):  # noqaС901
-    diff = change_value_bool(diff)
-
-    def wrapper(diff):
-        for d in diff:
-            if d['meta'] == 'in_both':
-                d['key'] = 'in_both.' + d['key']
-            elif d['meta'] == 'in_first':
-                d['key'] = 'in_first.' + d['key']
-            elif d['meta'] == 'in_second':
-                d['key'] = 'in_second.' + d['key']
-            d.pop('meta')
-
-        diff_list = []
-        for i in diff:
-            if isinstance(i['value'], list):
-                wrapper(i['value'])
-            diff_list.append(i)
-        return diff_list
-    return wrapper(diff)
+    if value is True:
+        return TRUE
+    elif value is False:
+        return FALSE
+    elif value is None:
+        return NONE
+    else:
+        return value
 
 
-def get_stylish(file1, file2):
-    diff_list = generate_diff_list(file1, file2)
+def get_stylish(diff: List[Dict]) -> str:
+    """Serialize 'diff' to a stylish formatted 'str' """
+    diff = sort_diff(diff)
 
-    def wrapper(diff_list, indent):
+    def wrapper(diff, indent):
         end_diff = []
-        for i in diff_list:
+        for i in diff:
             str_ind = ' ' * indent
-            key, value = i['key'], i['value']
+            key, value, meta = i['key'], i['value'], i['meta']
             if isinstance(value, list):
-
-                value = wrapper(value, indent + 4)
+                value = wrapper(value, indent + INDENT)
             elif isinstance(value, dict):
-                if isinstance(value, dict):
-                    value = format_dict(value, str_ind)
-            end_diff.append('{}{}: {}'.format(str_ind, key, value))
-
-        ind_bracket = ' ' * (indent - 4)
+                value = format_dict(value, str_ind)
+            end_diff.append('{}{}: {}'.format(str_ind,
+                                              ''.join([meta, key]),
+                                              get_value(value)))
+        ind_bracket = ' ' * (indent - INDENT)
         final_string = '{\n' + '\n'.join(end_diff) + '\n' + ind_bracket + '}'
-        final_string = final_string.replace('  in_both.', '  ')
-        final_string = final_string.replace('  in_first.', '- ')
-        final_string = final_string.replace('  in_second.', '+ ')
+        final_string = final_string.replace('  in_both', '  ')
+        final_string = final_string.replace('  in_first', '- ')
+        final_string = final_string.replace('  in_second', '+ ')
+        final_string = final_string.replace('  children', '  ')
         return final_string
-    return wrapper(diff_list, 4)
+    return wrapper(diff, INDENT)
 
 
-def format_dict(dct: Dict[Any, Any], indent: str) -> str:
+def format_dict(dct: Dict[Any, Any], str_indent: str) -> str:
     """Format nested dict to stylish string
     Args:
         dct: nested dict
@@ -87,7 +57,7 @@ def format_dict(dct: Dict[Any, Any], indent: str) -> str:
     res = []
     for (key, value) in sorted(dct.items()):
         if isinstance(value, dict):
-            value = format_dict(value, indent + '    ')
-        res.append('{}    {}: {}'.format(indent, key, value))
-    string = '{{\n{}\n{}}}'.format('\n'.join(res), indent)
+            value = format_dict(value, str_indent + STR_INDENT)
+        res.append('{}{}{}: {}'.format(str_indent, STR_INDENT, key, value))
+    string = '{{\n{}\n{}}}'.format('\n'.join(res), str_indent)
     return string

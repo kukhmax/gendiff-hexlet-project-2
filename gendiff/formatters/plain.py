@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 
-from gendiff.difference import make_diff
-from gendiff.formatters.stylish import change_value_bool
+from gendiff.formatters.sorting import sort_diff
 from typing import List, Dict
 
+TRUE, FALSE, NONE, COMPLEX = 'true', 'false', 'null', '[complex value]'
 
-def get_plain(path_file1: str, path_file2: str) -> str:
-    diff = make_diff(path_file1, path_file2)
-    # меняем формат (например, True на 'true')
-    diff = change_value_bool(diff)
-    strings = get_plain_format(diff)
+
+def get_plain(diff: List[Dict]) -> str:
+    """Serialize 'diff' to a plain formatted 'str' """
+    sorted_diff = sort_diff(diff)
+    strings = get_plain_format(sorted_diff)
     return get_final_string(strings)
 
 
@@ -19,17 +19,16 @@ def get_plain_format(diff: List[Dict]) -> List[str]:  # noqa C901
     def walk(diff, new_key):
         for i, d in enumerate(diff):
             key, meta = d['key'], d['meta']
-            value = change_dict_to_default_value(d['value'])
+            value = make_complex_value(d['value'])
 
-            if meta == 'in_both' and isinstance(value, list):
-                # если значение словарь, идем внутрь добавляем ключ к new_key
+            if meta == 'children':
                 walk(value, new_key + [key])
             elif meta == 'in_both':
                 continue
             elif i < len(diff) - 1 and key == diff[i + 1]['key']:
                 result = get_string_if_updated('.'.join(new_key + [key]),
                                                value,
-                                               change_dict_to_default_value(diff[i + 1]['value']))  # noqa E501
+                                               make_complex_value(diff[i + 1]['value']))  # noqa E501
                 strings.append(result)
             elif meta == 'in_first':
                 result = get_string_if_removed('.'.join(new_key + [key]))
@@ -43,48 +42,43 @@ def get_plain_format(diff: List[Dict]) -> List[str]:  # noqa C901
     return walk(diff, [])
 
 
-def change_dict_to_default_value(value: str) -> str:
+def make_complex_value(value: str) -> str:
     """Change nested dict to [complex value]"""
     if isinstance(value, dict):
-        value = '[complex value]'
+        value = COMPLEX
     return value
 
 
-def is_bool(value: str) -> bool:
-    """Returns True if we have to delite brackets"""
-    values = ['true', 'false', 'null', '[complex value]']
-    if value not in values:
-        return True
-    return False
+def change_value(value: str) -> str:
+    """Change value for plain formatted 'str' """
+    if value == COMPLEX:
+        return COMPLEX
+    elif isinstance(value, str):
+        return f"'{value}'"
+    elif value is True:
+        return TRUE
+    elif value is False:
+        return FALSE
+    elif value is None:
+        return NONE
+    else:
+        return value
 
 
 def get_string_if_removed(key: str) -> str:
     return "Property '{}' was removed".format(key)
 
 
-def is_str(value):
-    return True if isinstance(value, str) else False
-
-
 def get_string_if_updated(key: str, val1: str, val2: str) -> str:
     """Returns string if value changed"""
-    if is_str(val1) and is_str(val2) and is_bool(val1) and is_bool(val2):
-        return "Property '{}' was updated. \
-From '{}' to '{}'".format(key, val1, val2)
-    elif isinstance(val1, str) and is_bool(val1):
-        return "Property '{}' was updated. \
-From '{}' to {}".format(key, val1, val2)
-    elif isinstance(val2, str) and is_bool(val2):
-        return "Property '{}' was updated. \
-From {} to '{}'".format(key, val1, val2)
+    val1, val2 = change_value(val1), change_value(val2)
     return "Property '{}' was updated. \
 From {} to {}".format(key, val1, val2)
 
 
 def get_string_if_added(key: str, value: str) -> str:
     """Returns string if value in second file"""
-    if isinstance(value, str) and is_bool(value):
-        return "Property '{}' was added with value: '{}'".format(key, value)
+    value = change_value(value)
     return "Property '{}' was added with value: {}".format(key, value)
 
 

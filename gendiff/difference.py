@@ -5,7 +5,8 @@ from typing import Any, List, Dict
 
 
 def make_diff(path_file1, path_file2):
-    dict1, dict2 = get_parsed_files(path_file1, path_file2)
+    dict1 = get_parsed_files(path_file1)
+    dict2 = get_parsed_files(path_file2)
     return make_diff_structure(dict1, dict2)
 
 
@@ -22,19 +23,19 @@ def make_diff_structure(dict1: Dict[str, Any],                           # noqa–
     key2 = dict2.keys()
     all_keys = key1 | key2
     diff = []
-    for key in sorted(all_keys):
+    for key in all_keys:
         value1 = dict1.get(key)
         value2 = dict2.get(key)
         if key not in dict2:
             diff.append(get_if_first(key, value1))
         elif key not in dict1:
             diff.append(get_if_second(key, value2))
-        elif key in dict1 and key in dict2:
+        else:
             if value1 == value2:
                 diff.append(get_if_both(key, value1))
             elif isinstance(value1, dict) and isinstance(value2, dict):
                 child = make_diff_structure(value1, value2)
-                diff.append(get_if_both(key, child))
+                diff.append(get_if_child(key, child))
             else:
                 diff.append(get_if_first(key, value1))
                 diff.append(get_if_second(key, value2))
@@ -47,12 +48,20 @@ def get_diff(key, value, meta):
 
 
 def get_if_first(key, value):
+    """Make dict if key only in first file"""
     return get_diff(key, value, 'in_first')
 
 
 def get_if_second(key, value):
+    """Make dict if key only in second file"""
     return get_diff(key, value, 'in_second')
 
 
 def get_if_both(key, value):
+    """Make dict if key in both file"""
     return get_diff(key, value, 'in_both')
+
+
+def get_if_child(key, value):
+    """Make dict if value has a children"""
+    return get_diff(key, value, 'children')
