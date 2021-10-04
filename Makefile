@@ -21,6 +21,7 @@ test-coverage:
 
 lint:
 	poetry run flake8 gendiff
+	poetry run flake8 tests
 	poetry run mypy gendiff
 
 selfcheck:
