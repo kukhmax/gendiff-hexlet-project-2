@@ -8,20 +8,20 @@ from gendiff.difference import make_diff
 STYLISH, PLAIN, JSON = 'stylish', 'plain', 'json'
 
 
-def generate_diff(path_file1: str,
-                  path_file2: str,
+def generate_diff(file_path1: str,
+                  file_path2: str,
                   format=STYLISH) -> str:
     """Generate 'diff' and Serialize 'diff' to formatted 'str'
     Args:
-        path_file1: path to file1
-        path_file2: path to file2
+        file_path1: path to file1
+        file_path2: path to file2
     Retruns:
         One of formats 'str':
             *STYLISH
             *PLAIN
             *JSON
     """
-    diff = make_diff(path_file1, path_file2)
+    diff = make_diff(file_path1, file_path2)
     if format == PLAIN:
         return get_plain(diff)
     elif format == JSON:

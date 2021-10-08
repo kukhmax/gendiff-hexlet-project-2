@@ -6,17 +6,18 @@ from pathlib import Path
 from typing import Any, Dict
 
 
-def get_parsed_files(path_file: str) -> Dict[str, Any]:
+def parse_file(file_path: str) -> Dict[str, Any]:
     """Check formats of file and read them.
     Args:
-        path_file: Path to a file.
+        file_path: Path to a file.
     Returns:
         Parsed file.
     """
-    if Path(path_file).suffix == ".yml" or Path(path_file).suffix == ".yaml":
-        with open(path_file) as f1:
+    suffix_of_file = Path(file_path).suffix.lower()
+    if suffix_of_file == ".yml" or suffix_of_file == ".yaml":
+        with open(file_path) as f1:
             dict_from_file = yml.safe_load(f1)
-    elif Path(path_file).suffix == ".json":
-        with open(path_file) as f1:
+    elif suffix_of_file == ".json":
+        with open(file_path) as f1:
             dict_from_file = js.load(f1)
     return dict_from_file

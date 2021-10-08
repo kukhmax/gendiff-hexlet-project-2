@@ -7,5 +7,5 @@ from typing import List, Dict
 
 def get_json(diff: List[Dict]) -> str:
     """Serialize 'diff' to a JSON formatted 'str' """
-    sorted_diff = sort_diff(diff)
-    return json.dumps(sorted_diff)
+    sort_diff(diff)
+    return json.dumps(diff)

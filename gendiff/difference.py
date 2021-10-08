@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 
-from gendiff.parser_data import get_parsed_files
+from gendiff.parser_data import parse_file
 from typing import Any, List, Dict
+
+REMOVED = 'removed'
+ADDED = 'added'
+UPDATED = 'updated'
+CHILDREN = 'children'
 
 
 def make_diff(path_file1, path_file2):
-    dict1 = get_parsed_files(path_file1)
-    dict2 = get_parsed_files(path_file2)
+    dict1 = parse_file(path_file1)
+    dict2 = parse_file(path_file2)
     return make_diff_structure(dict1, dict2)
 
 
@@ -19,49 +24,61 @@ def make_diff_structure(dict1: Dict[str, Any],                           # noqa–
     Returns:
         Difference of first file and second file.
     """
-    key1 = dict1.keys()
-    key2 = dict2.keys()
-    all_keys = key1 | key2
+    keys1 = dict1.keys()
+    keys2 = dict2.keys()
+    all_keys = keys1 | keys2
     diff = []
     for key in all_keys:
         value1 = dict1.get(key)
         value2 = dict2.get(key)
         if key not in dict2:
-            diff.append(get_if_first(key, value1))
+            diff.append(get_removed_diff(key, value1))
         elif key not in dict1:
-            diff.append(get_if_second(key, value2))
+            diff.append(get_added_diff(key, value2))
         else:
             if value1 == value2:
-                diff.append(get_if_both(key, value1))
+                diff.append(get_updated_diff(key, value1))
             elif isinstance(value1, dict) and isinstance(value2, dict):
                 child = make_diff_structure(value1, value2)
-                diff.append(get_if_child(key, child))
+                diff.append(get_diff_has_child(key, child))
             else:
-                diff.append(get_if_first(key, value1))
-                diff.append(get_if_second(key, value2))
+                diff.append(get_removed_value_diff(key, value1))
+                diff.append(get_added_value_diff(key, value2))
     return diff
 
 
-def get_diff(key, value, meta):
+def get_diff(key, value, meta, submeta=None):
     """Make dict of data"""
-    return dict(key=key, value=value, meta=meta)
+    return dict(key=key, value=value, meta=meta, submeta=submeta)
 
 
-def get_if_first(key, value):
+def get_removed_diff(key, value):
     """Make dict if key only in first file"""
-    return get_diff(key, value, 'in_first')
+    return get_diff(key, value, REMOVED)
 
 
-def get_if_second(key, value):
+def get_removed_value_diff(key, value):
+    """Make dict if key in both file
+       and value only in first file"""
+    return get_diff(key, value, REMOVED, REMOVED)
+
+
+def get_added_diff(key, value):
     """Make dict if key only in second file"""
-    return get_diff(key, value, 'in_second')
+    return get_diff(key, value, ADDED)
 
 
-def get_if_both(key, value):
+def get_added_value_diff(key, value):
+    """Make dict if key in both file
+       and value only in second file"""
+    return get_diff(key, value, ADDED, ADDED)
+
+
+def get_updated_diff(key, value):
     """Make dict if key in both file"""
-    return get_diff(key, value, 'in_both')
+    return get_diff(key, value, UPDATED)
 
 
-def get_if_child(key, value):
+def get_diff_has_child(key, value):
     """Make dict if value has a children"""
-    return get_diff(key, value, 'children')
+    return get_diff(key, value, CHILDREN)

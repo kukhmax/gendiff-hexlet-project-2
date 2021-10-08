@@ -1,6 +1,6 @@
 import pytest
-from gendiff.formatters.engine import generate_diff
-from gendiff.formatters.engine import STYLISH, PLAIN, JSON
+from gendiff.engine import generate_diff
+from gendiff.engine import STYLISH, PLAIN, JSON
 
 JSON_NESTED1 = 'tests/fixtures/file_nested1.json'
 JSON_NESTED2 = 'tests/fixtures/file_nested2.json'
@@ -19,7 +19,6 @@ JSON_FLAT_RES = 'tests/results/json_flat_result'
 def get_expected_result(path_to_file):
     with open(path_to_file) as file:
         expected_result = file.read()
-        print(expected_result)
     return expected_result
 
 

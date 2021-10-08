@@ -3,9 +3,8 @@
 from typing import Dict, List
 
 
-def sort_diff(diff: List[Dict]) -> List[Dict]:
+def sort_diff(diff: List[Dict]):
     diff.sort(key=lambda x: x['key'])
     for i in diff:
         if i['meta'] == 'children':
             sort_diff(i['value'])
-    return diff

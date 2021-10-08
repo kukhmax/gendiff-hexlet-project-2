@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import argparse
-from gendiff.formatters.engine import generate_diff
-from gendiff.formatters.engine import STYLISH, PLAIN, JSON
+from gendiff.engine import generate_diff
+from gendiff.engine import STYLISH, PLAIN, JSON
 
 
 def main():
