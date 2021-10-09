@@ -5,6 +5,7 @@ from typing import Any, List, Dict
 
 REMOVED = 'removed'
 ADDED = 'added'
+NOT_UPDATED = 'not updated'
 UPDATED = 'updated'
 CHILDREN = 'children'
 
@@ -37,19 +38,18 @@ def make_diff_structure(dict1: Dict[str, Any],                           # noqa–
             diff.append(get_added_diff(key, value2))
         else:
             if value1 == value2:
-                diff.append(get_updated_diff(key, value1))
+                diff.append(get_same_value_diff(key, value1))
             elif isinstance(value1, dict) and isinstance(value2, dict):
                 child = make_diff_structure(value1, value2)
                 diff.append(get_diff_has_child(key, child))
             else:
-                diff.append(get_removed_value_diff(key, value1))
-                diff.append(get_added_value_diff(key, value2))
+                diff.append(get_updated_value_diff(key, value1, value2))
     return diff
 
 
-def get_diff(key, value, meta, submeta=None):
+def get_diff(key, value, meta):
     """Make dict of data"""
-    return dict(key=key, value=value, meta=meta, submeta=submeta)
+    return dict(key=key, value=value, meta=meta)
 
 
 def get_removed_diff(key, value):
@@ -57,26 +57,20 @@ def get_removed_diff(key, value):
     return get_diff(key, value, REMOVED)
 
 
-def get_removed_value_diff(key, value):
-    """Make dict if key in both file
-       and value only in first file"""
-    return get_diff(key, value, REMOVED, REMOVED)
-
-
 def get_added_diff(key, value):
     """Make dict if key only in second file"""
     return get_diff(key, value, ADDED)
 
 
-def get_added_value_diff(key, value):
-    """Make dict if key in both file
-       and value only in second file"""
-    return get_diff(key, value, ADDED, ADDED)
+def get_updated_value_diff(key, value, value2):
+    """Make dict if keys in both file
+       but have different values """
+    return dict(key=key, value=value, value2=value2, meta=UPDATED)
 
 
-def get_updated_diff(key, value):
+def get_same_value_diff(key, value):
     """Make dict if key in both file"""
-    return get_diff(key, value, UPDATED)
+    return get_diff(key, value, NOT_UPDATED)
 
 
 def get_diff_has_child(key, value):

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from gendiff.difference import ADDED, CHILDREN, REMOVED, UPDATED
+from gendiff.difference import ADDED, CHILDREN, REMOVED, NOT_UPDATED, UPDATED
 from gendiff.formatters.sorting import sort_diff
 from typing import List, Dict
 
@@ -17,23 +17,20 @@ def format_to_plain(diff: List[Dict]) -> str:  # noqa C901
     lines = []
 
     def walk(diff, parent_key):
-        for index, item in enumerate(diff):
+        for item in diff:
             key, meta, value = item['key'], item['meta'], item['value']
-            submeta = item['submeta']
             full_path = '.'.join(parent_key + [key])
             if meta == CHILDREN:
                 walk(value, parent_key + [key])
-            elif meta == UPDATED:
+            elif meta == NOT_UPDATED:
                 continue
-            elif meta == REMOVED and submeta == REMOVED:
-                value1 = convert_value(value)
-                value2 = convert_value(diff[index + 1]['value'])
-                lines.append(get_updated_line(full_path, value1, value2))
+            elif meta == UPDATED:
+                value = convert_value(value)
+                value2 = convert_value(item['value2'])
+                lines.append(get_updated_line(full_path, value, value2))
             elif meta == REMOVED:
                 lines.append(get_removed_line(full_path))
             elif meta == ADDED:
-                if submeta == ADDED:
-                    continue
                 value = convert_value(value)
                 lines.append(get_added_line(full_path, value))
         return '\n'.join(lines)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from gendiff.difference import ADDED, CHILDREN, REMOVED
+from gendiff.difference import ADDED, CHILDREN, REMOVED, UPDATED
 from gendiff.formatters.sorting import sort_diff
 from typing import Any, Dict, List
 
@@ -10,7 +10,7 @@ INDENT = '    '
 SIGN_SPACE = 2
 
 
-def convert_format(value, indent):
+def convert_format(value: str, indent: str) -> str:
     """Convert format of values: True, False, None
        to true, false, null
        and dict to stylish
@@ -41,6 +41,10 @@ def get_stylish(diff: List[Dict]) -> str:
             value = convert_format(value, indent)
             list_of_str.append('{}: {}'.format(make_key(meta, key, depth),
                                                value))
+            if meta == UPDATED:
+                value2 = convert_format(item['value2'], indent)
+                list_of_str.append('{}: {}'.format(make_key(ADDED, key, depth),
+                                                   value2))
         ind_bracket = ' ' * (depth - DEPTH)
         return '{\n' + '\n'.join(list_of_str) + '\n' + ind_bracket + '}'
     return wrapper(diff, DEPTH)
@@ -53,6 +57,8 @@ def make_key(meta: str, key: str, depth: int) -> str:
         return f'{indent}- {key}'
     elif meta == ADDED:
         return f'{indent}+ {key}'
+    elif meta == UPDATED:
+        return f'{indent}- {key}'
     else:
         return f'{indent}  {key}'
 
