@@ -53,12 +53,10 @@ def get_stylish(diff: List[Dict]) -> str:
 def make_key(meta: str, key: str, depth: int) -> str:
     """Format key to stylish with sign"""
     indent = ' ' * (depth - SIGN_SPACE)
-    if meta == REMOVED:
+    if meta == REMOVED or meta == UPDATED:
         return f'{indent}- {key}'
     elif meta == ADDED:
         return f'{indent}+ {key}'
-    elif meta == UPDATED:
-        return f'{indent}- {key}'
     else:
         return f'{indent}  {key}'
 
